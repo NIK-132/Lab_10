@@ -1,0 +1,14 @@
+C:\Users\PC\source\repos\CompilerIO\bin\Debug\net8.0\CompilerIO.exe
+C:\Users\PC\source\repos\CompilerIO\bin\Debug\net8.0\CompilerIO.deps.json
+C:\Users\PC\source\repos\CompilerIO\bin\Debug\net8.0\CompilerIO.runtimeconfig.json
+C:\Users\PC\source\repos\CompilerIO\bin\Debug\net8.0\CompilerIO.dll
+C:\Users\PC\source\repos\CompilerIO\bin\Debug\net8.0\CompilerIO.pdb
+C:\Users\PC\source\repos\CompilerIO\obj\Debug\net8.0\CompilerIO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PC\source\repos\CompilerIO\obj\Debug\net8.0\CompilerIO.AssemblyInfoInputs.cache
+C:\Users\PC\source\repos\CompilerIO\obj\Debug\net8.0\CompilerIO.AssemblyInfo.cs
+C:\Users\PC\source\repos\CompilerIO\obj\Debug\net8.0\CompilerIO.csproj.CoreCompileInputs.cache
+C:\Users\PC\source\repos\CompilerIO\obj\Debug\net8.0\CompilerIO.dll
+C:\Users\PC\source\repos\CompilerIO\obj\Debug\net8.0\refint\CompilerIO.dll
+C:\Users\PC\source\repos\CompilerIO\obj\Debug\net8.0\CompilerIO.pdb
+C:\Users\PC\source\repos\CompilerIO\obj\Debug\net8.0\CompilerIO.genruntimeconfig.cache
+C:\Users\PC\source\repos\CompilerIO\obj\Debug\net8.0\ref\CompilerIO.dll
