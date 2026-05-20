@@ -1,7 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Компилятор
 {
@@ -9,9 +6,39 @@ namespace Компилятор
     {
         static void Main()
         {
-            Console.WriteLine("=== Тестирование модуля ввода-вывода ===\n");
+            string filePath = @"example.pas";
 
-            string[] sourceLines = {
+            CreateTestFile(filePath);
+
+            (uint line, byte col, byte code)[] 
+                errorSpots = new (uint, byte, byte)[]
+            {
+                (10, 4, 100),
+                (12, 4, 100),
+                (13, 4, 147),
+                (14, 4, 147)
+            };
+
+            InputOutput.Initialize(filePath);
+
+            while (!InputOutput.EndOfFile)
+            {
+                foreach (var spot in errorSpots)
+                {
+                    if (InputOutput.PositionNow.LineNumber == spot.line &&
+                        InputOutput.PositionNow.CharNumber == spot.col)
+                    {
+                        InputOutput.Error(spot.code, InputOutput.PositionNow);
+                        break;
+                    }
+                }
+                InputOutput.NextCh();
+            }
+        }
+
+        private static void CreateTestFile(string path)
+        {
+            string[] lines = {
                 "program example ( input, output );",
                 "const c = 3;",
                 "b = 56;",
@@ -30,44 +57,7 @@ namespace Компилятор
                 "writeln( i, k )",
                 "end."
             };
-            File.WriteAllLines("example.pas", sourceLines);
-
-            var errors = new List<(int line, int col, byte code)>
-            {
-                (10, 5, 100),
-                (12, 5, 100),
-                (13, 5, 147),
-                (14, 5, 147)
-            };
-
-            const int LINE_WIDTH = 4;
-            int lineNum = 1;
-            int errCount = 0;
-
-            for (int i = 0; i < sourceLines.Length; i++)
-            {
-                Console.WriteLine($"{lineNum,LINE_WIDTH} {sourceLines[i]}");
-                lineNum++;
-
-                var lineErrors = errors.Where(e => e.line == i + 1).ToList();
-                if (lineErrors.Count == 0) continue;
-
-                foreach (var e in lineErrors)
-                {
-                    errCount++;
-                    Console.WriteLine($"**{errCount:D2}**");
-                    int arrowOffset = LINE_WIDTH + 1 + (e.col - 1);
-                    Console.WriteLine
-                        ($"{new string(' ', arrowOffset)}^ ошибка код {e.code}");
-                    string msg = e.code == 100
-                        ? "использование имени не соответствует описанию"
-                        : "тип метки не совпадает с типом выбирающего выражения";
-                    Console.WriteLine($"{new string(' ', LINE_WIDTH + 1)}{msg}");
-                }
-            }
-
-            Console.WriteLine($"\nКомпиляция окончена: ошибок — {errCount} !");
-            Console.ReadKey();
+            System.IO.File.WriteAllLines(path, lines);
         }
     }
 }

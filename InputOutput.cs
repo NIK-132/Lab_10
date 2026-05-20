@@ -1,74 +1,138 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Компилятор
 {
-    public struct TextPosition
-    {
-        public uint lineNumber;
-        public byte charNumber;
-        public TextPosition(uint ln = 0, byte c = 0)
-        {
-            lineNumber = ln;
-            charNumber = c;
-        }
-    }
-
     public static class InputOutput
     {
-        private static string[] _lines;
-        private static int _currentLineIdx;
-        private static int _currentCharPos;
+        private const byte MAX_ERRORS = 9;
 
-        public static char Ch { get; private set; }
-        public static TextPosition positionNow = new TextPosition(1, 0);
-        public static bool IsEndOfFile { get; private set; } = true;
+        private static string[] _sourceLines;
+        private static int _currentLine;
+        private static int _currentPos;
 
-        public static void LoadFile(string filePath)
+        private static uint _globalErrorCount;
+        private static List<Err> _lineErrors;
+
+        private static TextPosition _pos;
+        private static char _ch;
+        private static bool _endOfFile;
+
+        public static char Ch
+        {
+            get { return _ch; }
+        }
+        public static TextPosition PositionNow
+        {
+            get { return _pos; }
+        }
+        public static bool EndOfFile
+        {
+            get { return _endOfFile; }
+        }
+        public static List<Err> Errors
+        {
+            get { return _lineErrors; }
+        }
+
+        static InputOutput()
+        {
+            _lineErrors = new List<Err>();
+            _pos = new TextPosition(1, 0);
+            _sourceLines = Array.Empty<string>();
+        }
+
+        public static void Initialize(string filePath)
         {
             if (!File.Exists(filePath))
                 throw new FileNotFoundException("Файл не найден: " + filePath);
-            _lines = File.ReadAllLines(filePath);
-            if (_lines.Length == 0)
+
+            _sourceLines = File.ReadAllLines(filePath);
+            if (_sourceLines.Length == 0)
             {
-                IsEndOfFile = true;
+                _endOfFile = true;
                 return;
             }
-            _currentLineIdx = 0;
-            _currentCharPos = -1;
-            positionNow = new TextPosition(1, 0);
-            IsEndOfFile = false;
-            Ch = '\0';
+
+            _currentLine = 0;
+            _currentPos = -1;
+            _globalErrorCount = 0;
+            _lineErrors.Clear();
+            _endOfFile = false;
+            _pos = new TextPosition(1, 0);
+            NextCh();
         }
 
         public static void NextCh()
         {
-            if (IsEndOfFile) return;
+            if (_endOfFile) return;
+            if (_sourceLines == null) return;
 
-            _currentCharPos++;
-            positionNow.charNumber = (byte)(_currentCharPos + 1);
+            _currentPos++;
+            _pos.CharNumber = (byte)(_currentPos + 1);
 
-            if (_currentCharPos >= _lines[_currentLineIdx].Length)
+            if (_currentPos >= _sourceLines[_currentLine].Length)
             {
-                _currentLineIdx++;
-                if (_currentLineIdx >= _lines.Length)
+                PrintCurrentLine();
+                if (_lineErrors.Count > 0)
+                    PrintLineErrors();
+
+                _currentLine++;
+                if (_currentLine >= _sourceLines.Length)
                 {
-                    IsEndOfFile = true;
-                    Ch = '\0';
+                    _endOfFile = true;
+                    _ch = '\0';
+                    FinalizeCompilation();
                     return;
                 }
-                _currentCharPos = -1;
-                positionNow.lineNumber = (uint)(_currentLineIdx + 1);
-                positionNow.charNumber = 0;
+
+                _currentPos = -1;
+                _pos.LineNumber = (uint)(_currentLine + 1);
+                _pos.CharNumber = 0;
+                _lineErrors.Clear();
                 NextCh();
                 return;
             }
 
-            Ch = _lines[_currentLineIdx][_currentCharPos];
+            _ch = _sourceLines[_currentLine][_currentPos];
         }
 
-        public static string GetLine(int lineNumber) =>
-            (lineNumber >= 1 && lineNumber <= _lines.Length) 
-            ? _lines[lineNumber - 1] : "";
+        public static void Error(byte code, TextPosition position)
+        {
+            if (_lineErrors.Count < MAX_ERRORS)
+                _lineErrors.Add(new Err(position, code));
+        }
+
+        private static void PrintCurrentLine()
+        {
+            if (_sourceLines != null && _currentLine < _sourceLines.Length)
+                Console.WriteLine($"{_pos.LineNumber,4}  " +
+                    $"{_sourceLines[_currentLine]}");
+        }
+
+        private static void PrintLineErrors()
+        {
+            foreach (var err in _lineErrors)
+            {
+                _globalErrorCount++;
+                string marker = "**" + (_globalErrorCount < 10 ? "0" : "") 
+                    + _globalErrorCount + "**";
+                int spaces = err.ErrorPosition.CharNumber;
+                string pointer = marker + new string(' ', spaces) 
+                    + "^ ошибка код " + err.ErrorCode;
+                Console.WriteLine(pointer);
+                string desc = ErrorTable.GetDescription(err.ErrorCode);
+                if (!string.IsNullOrEmpty(desc))
+                    Console.WriteLine(new string(' ', 
+                        marker.Length + spaces + 1) + desc);
+            }
+        }
+
+        private static void FinalizeCompilation()
+        {
+            Console.WriteLine($"\nКомпиляция окончена: " +
+                $"ошибок — {_globalErrorCount}!");
+        }
     }
 }
