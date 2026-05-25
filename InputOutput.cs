@@ -8,7 +8,7 @@ namespace Компилятор
     {
         private const byte MAX_ERRORS = 9;
 
-        private static string[] _sourceLines;
+        private static string[]? _sourceLines;
         private static int _currentLine;
         private static int _currentPos;
 
@@ -21,16 +21,25 @@ namespace Компилятор
 
         public static char Ch
         {
-            get { return _ch; }
+            get 
+            { 
+                return _ch; 
+            }
         }
+
         public static TextPosition PositionNow
         {
-            get { return _pos; }
+            get 
+            { 
+                return _pos; 
+            }
         }
+
         public static bool EndOfFile
         {
             get { return _endOfFile; }
         }
+
         public static List<Err> Errors
         {
             get { return _lineErrors; }
@@ -43,10 +52,12 @@ namespace Компилятор
             _sourceLines = Array.Empty<string>();
         }
 
-        public static void Initialize(string filePath)
+        public static void LoadFile(string filePath)
         {
             if (!File.Exists(filePath))
+            {
                 throw new FileNotFoundException("Файл не найден: " + filePath);
+            }
 
             _sourceLines = File.ReadAllLines(filePath);
             if (_sourceLines.Length == 0)
@@ -66,8 +77,14 @@ namespace Компилятор
 
         public static void NextCh()
         {
-            if (_endOfFile) return;
-            if (_sourceLines == null) return;
+            if (_endOfFile)
+            {
+                return;
+            }
+            if (_sourceLines == null)
+            {
+                return;
+            }
 
             _currentPos++;
             _pos.CharNumber = (byte)(_currentPos + 1);
@@ -101,31 +118,44 @@ namespace Компилятор
         public static void Error(byte code, TextPosition position)
         {
             if (_lineErrors.Count < MAX_ERRORS)
+            {
                 _lineErrors.Add(new Err(position, code));
+            }
         }
 
         private static void PrintCurrentLine()
         {
             if (_sourceLines != null && _currentLine < _sourceLines.Length)
+            {
                 Console.WriteLine($"{_pos.LineNumber,4}  " +
                     $"{_sourceLines[_currentLine]}");
+            }
         }
 
         private static void PrintLineErrors()
         {
+            const int lineNumberWidth = 4;
+            const int spaceAfterNumber = 1;
+            int indentBase = lineNumberWidth + spaceAfterNumber;
+
             foreach (var err in _lineErrors)
             {
                 _globalErrorCount++;
                 string marker = "**" + (_globalErrorCount < 10 ? "0" : "") 
                     + _globalErrorCount + "**";
-                int spaces = err.ErrorPosition.CharNumber;
-                string pointer = marker + new string(' ', spaces) 
+                int column = err.ErrorPosition.CharNumber - 1;
+                if (column < 1) column = 1;
+                int totalIndent = indentBase + column + 1;
+
+                string arrowLine = new string(' ', totalIndent - marker.Length)
                     + "^ ошибка код " + err.ErrorCode;
-                Console.WriteLine(pointer);
+                Console.WriteLine(marker + arrowLine);
+
                 string desc = ErrorTable.GetDescription(err.ErrorCode);
                 if (!string.IsNullOrEmpty(desc))
-                    Console.WriteLine(new string(' ', 
-                        marker.Length + spaces + 1) + desc);
+                {
+                    Console.WriteLine(new string(' ', totalIndent + 1) + desc);
+                }
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Компилятор
 {
@@ -6,58 +7,52 @@ namespace Компилятор
     {
         static void Main()
         {
-            string filePath = @"example.pas";
+            string inputFile = "example.pas";
+            string outputFile = "tokens.txt";
 
-            CreateTestFile(filePath);
+            CreateTestFile(inputFile);
 
-            (uint line, byte col, byte code)[] 
-                errorSpots = new (uint, byte, byte)[]
+            try
             {
-                (10, 4, 100),
-                (12, 4, 100),
-                (13, 4, 147),
-                (14, 4, 147)
-            };
+                InputOutput.LoadFile(inputFile);
 
-            InputOutput.Initialize(filePath);
-
-            while (!InputOutput.EndOfFile)
-            {
-                foreach (var spot in errorSpots)
+                LexicalAnalyzer lex = new LexicalAnalyzer();
+                using (StreamWriter writer = new StreamWriter(outputFile))
                 {
-                    if (InputOutput.PositionNow.LineNumber == spot.line &&
-                        InputOutput.PositionNow.CharNumber == spot.col)
+                    while (!InputOutput.EndOfFile)
                     {
-                        InputOutput.Error(spot.code, InputOutput.PositionNow);
-                        break;
+                        byte sym = lex.NextSym();
+                        if (sym == 0) break;
+
+                        writer.Write(sym + " ");
                     }
                 }
-                InputOutput.NextCh();
+
+                Console.WriteLine("Лексический анализ завершён. " +
+                    "Результат в файле " + outputFile);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка: " + ex.Message);
             }
         }
 
         private static void CreateTestFile(string path)
         {
             string[] lines = {
-                "program example ( input, output );",
-                "const c = 3;",
-                "b = 56;",
-                "var a : 'a' ... 'c';",
-                "k, i : integer;",
+                "program example;",
+                "var a, b: integer;",
+                "ch, s: char;",
+                "const c = 10;",
+                "ch := 'ab';",
+                "s := 'a;",
                 "begin",
-                "read( k, i );",
-                "for a := 'a' to 'c' do",
-                "case a of",
-                "    k: i := i * k;",
-                "    'b': i := i + 1;",
-                "    i : k := k + 2;",
-                "    b: i := i - k;",
-                "    c: i := ( i + k ) * 2",
-                "end;",
-                "writeln( i, k )",
+                "    a := 123.;",
+                "    b := a * 2 + 40000;",
+                "    write(a, b) #",
                 "end."
             };
-            System.IO.File.WriteAllLines(path, lines);
+            File.WriteAllLines(path, lines);
         }
     }
 }

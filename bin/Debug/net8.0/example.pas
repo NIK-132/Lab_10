@@ -1,17 +1,11 @@
-program example ( input, output );
-const c = 3;
-b = 56;
-var a : 'a' ... 'c';
-k, i : integer;
+program example;
+var a, b: integer;
+ch, s: char;
+const c = 10;
+ch := 'ab';
+s := 'a;
 begin
-read( k, i );
-for a := 'a' to 'c' do
-case a of
-    k: i := i * k;
-    'b': i := i + 1;
-    i : k := k + 2;
-    b: i := i - k;
-    c: i := ( i + k ) * 2
-end;
-writeln( i, k )
+    a := 123.;
+    b := a * 2 + 40000;
+    write(a, b) #
 end.
