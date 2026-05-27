@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Компилятор
@@ -12,29 +13,33 @@ namespace Компилятор
 
             CreateTestFile(inputFile);
 
-            try
+            InputOutput.Initialize(inputFile);
+            if (InputOutput.EndOfFile)
             {
-                InputOutput.LoadFile(inputFile);
+                Console.WriteLine("Файл не найден или пуст.");
+                return;
+            }
 
-                LexicalAnalyzer lex = new LexicalAnalyzer();
-                using (StreamWriter writer = new StreamWriter(outputFile))
+            LexicalAnalyzer lex = new LexicalAnalyzer();
+            List<byte> tokens = new List<byte>();
+
+            while (!InputOutput.EndOfFile)
+            {
+                byte code = lex.NextSym();
+                if (code != 0)
                 {
-                    while (!InputOutput.EndOfFile)
-                    {
-                        byte sym = lex.NextSym();
-                        if (sym == 0) break;
-
-                        writer.Write(sym + " ");
-                    }
+                    tokens.Add(code);
                 }
+            }
 
-                Console.WriteLine("Лексический анализ завершён. " +
-                    "Результат в файле " + outputFile);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Ошибка: " + ex.Message);
-            }
+            LexicalAnalyzer.CheckParenBalance();
+            InputOutput.FlushErrors();
+            InputOutput.Finish();
+
+            File.WriteAllText(outputFile, string.Join(" ", tokens));
+            Console.WriteLine("Лексический анализ завершён. " +
+                "Результат в файле " + outputFile);
+            Console.ReadKey();
         }
 
         private static void CreateTestFile(string path)
@@ -46,6 +51,9 @@ namespace Компилятор
                 "const c = 10;",
                 "ch := 'ab';",
                 "s := 'a;",
+                "// 40000",
+                "   )",
+                "(",
                 "begin",
                 "    a := 123.;",
                 "    b := a * 2 + 40000;",

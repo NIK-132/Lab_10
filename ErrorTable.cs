@@ -4,18 +4,18 @@ namespace Компилятор
 {
     static class ErrorTable
     {
-        private static readonly Dictionary<byte, string> 
-            _messages = new Dictionary<byte, string>
+        static readonly Dictionary<byte, string> 
+            errors = new Dictionary<byte, string>
         {
+            { 1, "недопустимый символ" },
             { 100, "использование имени не соответствует описанию" },
             { 147, "тип метки не совпадает с типом выбирающего выражения" },
             { 203, "целая константа превышает допустимый диапазон" }
         };
 
-        public static string? GetDescription(byte code)
+        public static string GetDescription(byte code)
         {
-            _messages.TryGetValue(code, out string? desc);
-            return desc;
+            return errors.TryGetValue(code, out string desc) ? desc : null;
         }
     }
 }

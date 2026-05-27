@@ -4,6 +4,9 @@ ch, s: char;
 const c = 10;
 ch := 'ab';
 s := 'a;
+// 40000
+   )
+(
 begin
     a := 123.;
     b := a * 2 + 40000;
