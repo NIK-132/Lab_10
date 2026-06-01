@@ -228,7 +228,7 @@ namespace Компилятор
         {
             if (_level > 0)
             {
-                InputOutput.Error(100, _unclosedParenPos);
+                InputOutput.Error(105, _unclosedParenPos);
             }
         }
 
@@ -259,7 +259,9 @@ namespace Компилятор
                 }
                 byte code = Keywords.GetCode(name.ToLower());
                 if (code != 0)
+                {
                     _symbol = code;
+                }
                 else
                 {
                     _symbol = ident;
@@ -283,7 +285,9 @@ namespace Компилятор
                         InputOutput.Error(203, startPos);
                         overflow = true;
                         while (!InputOutput.EndOfFile && char.IsDigit(InputOutput.Ch))
+                        {
                             InputOutput.NextCh();
+                        }
                         _nmb_int = 0;
                         break;
                     }
@@ -360,8 +364,8 @@ namespace Компилятор
                     InputOutput.NextCh();
                     if (!InputOutput.EndOfFile && InputOutput.Ch == '/')
                     {
-                        while (!InputOutput.EndOfFile 
-                            && InputOutput.PositionNow.CharNumber 
+                        while (!InputOutput.EndOfFile
+                            && InputOutput.PositionNow.CharNumber
                             < InputOutput.LastInLine)
                         {
                             InputOutput.NextCh();
@@ -418,7 +422,7 @@ namespace Компилятор
                 case ')':
                     if (_level == 0)
                     {
-                        InputOutput.Error(100, InputOutput.PositionNow);
+                        InputOutput.Error(106, InputOutput.PositionNow);
                     }
                     else
                     {
@@ -505,14 +509,14 @@ namespace Компилятор
 
                         if (InputOutput.EndOfFile)
                         {
-                            InputOutput.Error(100, startPos);
+                            InputOutput.Error(103, startPos);
                             _symbol = ident;
                             return _symbol;
                         }
 
                         if (InputOutput.Ch == '\'')
                         {
-                            InputOutput.Error(100, startPos);
+                            InputOutput.Error(102, startPos);
                             InputOutput.NextCh();
                             _symbol = ident;
                             return _symbol;
@@ -523,7 +527,7 @@ namespace Компилятор
 
                         if (InputOutput.EndOfFile || InputOutput.Ch != '\'')
                         {
-                            InputOutput.Error(100, startPos);
+                            InputOutput.Error(103, startPos);
                             while (!InputOutput.EndOfFile
                                 && InputOutput.Ch != ' '
                                 && InputOutput.Ch != ';'
@@ -546,7 +550,7 @@ namespace Компилятор
                             && (char.IsLetterOrDigit(InputOutput.Ch)
                             || InputOutput.Ch == '\''))
                         {
-                            InputOutput.Error(100, startPos);
+                            InputOutput.Error(104, startPos);
                             while (!InputOutput.EndOfFile
                                 && (char.IsLetterOrDigit(InputOutput.Ch)
                                 || InputOutput.Ch == '\''

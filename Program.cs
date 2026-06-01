@@ -49,7 +49,7 @@ namespace Компилятор
                 "var a, b: integer;",
                 "ch, s: char;",
                 "const c = 10;",
-                "ch := 'ab';",
+                "ch := '';",
                 "s := 'a;",
                 "// 40000",
                 "   )",
