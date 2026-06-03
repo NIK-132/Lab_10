@@ -4,23 +4,35 @@ namespace Компилятор
 {
     static class ErrorTable
     {
-        static readonly Dictionary<byte, string> 
-            errors = new Dictionary<byte, string>
+        static readonly Dictionary<byte, string> errors = new Dictionary<byte, string>
         {
             { 1, "недопустимый символ" },
+            { 2, "ожидается идентификатор" },
+            { 9, "ожидается (" },
+            { 10, "ожидается )" },
+            { 13, "ожидается :" },
+            { 14, "ожидается ;" },
+            { 15, "ожидается простой тип (integer, real, char, boolean)" },
+            { 16, "ожидается =" },
+            { 17, "ожидается begin" },
+            { 18, "ошибка в операторе" },
+            { 20, "ожидается :=" },
+            { 22, "ожидается end" },
+            { 25, "ожидается program" },
+            { 26, "ожидается ." },
+            { 33, "ожидается procedure" },
             { 100, "использование имени не соответствует описанию" },
             { 102, "пустая символьная константа" },
             { 103, "отсутствует закрывающая кавычка в символьной константе" },
             { 104, "некорректная символьная константа" },
             { 105, "незакрытая круглая скобка" },
             { 106, "лишняя закрывающая круглая скобка" },
-            { 147, "тип метки не совпадает с типом выбирающего выражения" },
             { 203, "целая константа превышает допустимый диапазон" },
         };
 
         public static string GetDescription(byte code)
         {
-            return errors.TryGetValue(code, out string desc) ? desc : null;
+            return errors.TryGetValue(code, out string desc) ? desc : "неизвестная ошибка";
         }
     }
 }

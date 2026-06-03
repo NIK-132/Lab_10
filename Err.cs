@@ -7,25 +7,25 @@
 
         public TextPosition ErrorPosition
         {
-            get 
-            { 
-                return _errorPosition; 
+            get
+            {
+                return _errorPosition;
             }
-            set 
-            { 
-                _errorPosition = value; 
+            set
+            {
+                _errorPosition = value;
             }
         }
 
         public byte ErrorCode
         {
-            get 
-            { 
-                return _errorCode; 
+            get
+            {
+                return _errorCode;
             }
-            set 
-            { 
-                _errorCode = value; 
+            set
+            {
+                _errorCode = value;
             }
         }
 

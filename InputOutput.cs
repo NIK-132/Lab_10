@@ -30,45 +30,45 @@ namespace Компилятор
 
         public static char Ch
         {
-            get 
-            { 
-                return _ch; 
+            get
+            {
+                return _ch;
             }
-            private set 
-            { 
-                _ch = value; 
+            private set
+            {
+                _ch = value;
             }
         }
 
         public static TextPosition PositionNow
         {
-            get 
-            { 
-                return _positionNow; 
+            get
+            {
+                return _positionNow;
             }
-            private set 
-            { 
-                _positionNow = value; 
+            private set
+            {
+                _positionNow = value;
             }
         }
 
         public static bool EndOfFile
         {
-            get 
-            { 
-                return _endOfFile; 
+            get
+            {
+                return _endOfFile;
             }
-            private set 
-            { 
-                _endOfFile = value; 
+            private set
+            {
+                _endOfFile = value;
             }
         }
 
         public static List<Err> Errors
         {
-            get 
-            { 
-                return _errors; 
+            get
+            {
+                return _errors;
             }
         }
         public static byte LastInLine => _lastInLine;
@@ -105,14 +105,14 @@ namespace Компилятор
                 }
                 else
                 {
-                    _positionNow = 
+                    _positionNow =
                         new TextPosition(_positionNow.LineNumber + 1, 0);
                     Ch = _line[0];
                 }
             }
             else
             {
-                _positionNow = new TextPosition(_positionNow.LineNumber, 
+                _positionNow = new TextPosition(_positionNow.LineNumber,
                     (byte)(_positionNow.CharNumber + 1));
                 Ch = _line[_positionNow.CharNumber];
             }
@@ -187,13 +187,13 @@ namespace Компилятор
                 _errCount++;
                 marker = "**" + (_errCount < 10 ? "0" : "") + _errCount + "**";
                 spaces = item.ErrorPosition.CharNumber;
-                pointerLine = marker + new string(' ', spaces) 
+                pointerLine = marker + new string(' ', spaces)
                     + "^ ошибка код " + item.ErrorCode;
                 Console.WriteLine(pointerLine);
                 desc = ErrorTable.GetDescription(item.ErrorCode);
                 if (!string.IsNullOrEmpty(desc))
                 {
-                    Console.WriteLine(new string(' ', 
+                    Console.WriteLine(new string(' ',
                         marker.Length + spaces + 1) + desc);
                 }
             }
